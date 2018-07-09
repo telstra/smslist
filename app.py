@@ -55,12 +55,12 @@ def post():
 	List = Query()
 
 	Prof = Query()
-	rtn = db.upsert({'profile': data['from'], 'nick': ''}, Prof.profile == data['from'])
+
 	profile = db.get(Prof.profile == data['from'])
 
-	if profile['nick'] is '': 
-		db.update({'nick': data['from']}, doc_ids=[profile.doc_id])
-		profile['nick'] = data['from'][2].replace("+61", "0", 1)+data['from'][3:]
+	if profile is None: 
+		rtn = db.upsert({'profile': data['from'], 'nick': data['from'][0:3].replace("+61", "0", 1)+data['from'][3:]}, Prof.profile == data['from'])
+		profile = db.get(Prof.profile == data['from'])
 
 	first = data['body'].split(' ')
 
