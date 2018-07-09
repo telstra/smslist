@@ -11,8 +11,8 @@ app = Flask(__name__)
 
 db = TinyDB('./db.json')
 
-client_id = 'client_id in here'
-client_secret = 'client_secret in here'
+client_id = 'client_id'
+client_secret = 'client_secret' 
 grant_type = 'client_credentials' 
 
 def provision():
@@ -55,10 +55,10 @@ def post():
 	List = Query()
 
 	Prof = Query()
-	rtn = db.upsert({'profile': data['from']}, Prof.profile == data['from'])
+	rtn = db.upsert({'profile': data['from'], 'nick': ''}, Prof.profile == data['from'])
 	profile = db.get(Prof.profile == data['from'])
 
-	if profile['nick'] is None: 
+	if profile['nick'] is '': 
 		db.update({'nick': data['from']}, doc_ids=[profile.doc_id])
 		profile['nick'] = data['from'][2].replace("+61", "0", 1)+data['from'][3:]
 
