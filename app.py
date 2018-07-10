@@ -3,7 +3,7 @@ import time
 import urllib
 import Telstra_Messaging
 from Telstra_Messaging.rest import ApiException
-from flask import Flask, abort, request 
+from flask import Flask, abort, request, render_template
 from tinydb import TinyDB, Query
 from tinydb.operations import delete, add
 
@@ -42,11 +42,23 @@ def sendsms(to, msg):
 
 	api_response = api_instance.send_sms(var)
 
+
 @app.route("/")
-def hello():
-    prov = provision()
-    return "All up and running, a number is provisioned at "+prov
-    
+def home():
+
+	c1 = Query()
+	count = db.count(c1.name.exists())
+	users = db.count(c1.profile.exists())
+	prov = provision()
+
+	inst = []
+	inst.append({'title': 'Create/Delete [list]', 'blurb': 'Create/Delete [list] is a single word (no spaces) that can contain alphanumerics.', 'example': 'Create testlist | Delete testlist'})
+	inst.append({'title': 'send [list] [message]', 'blurb': 'Sends a message to a list of mobiles, if the list is restricted (see below) the sending mobile number will need to be part of the list. send and the list name are removed from the group sms', 'example': 'send testlist hello world'})
+	inst.append({'title': 'add/remove [list] [mobile]', 'blurb': 'add/remove [list] [mobile], needs to be an existing list and sending mobile has to be the admin/owner of it.', 'example': 'add testlist 0400000000 | remove testlist 0400000000'})
+	inst.append({'title': 'restrict/unrestrict [list]', 'blurb': 'locks the list so that only numbers listed will be able to send messages to the list group.', 'example': 'restrict testlist | unrestrict testlist'})
+	inst.append({'title': 'Set Name [nickname]', 'blurb': 'Sets a username against a mobile number to display in list send so the name shows instead of the mobile number', 'example': 'set name hello_world'})
+
+	return render_template("index.html", prov=prov, lists=count, users=users, inst=inst)
 
 @app.route("/", methods=['POST'])
 def post():
@@ -55,12 +67,12 @@ def post():
 	List = Query()
 
 	Prof = Query()
-	rtn = db.upsert({'profile': data['from'], 'nick': ''}, Prof.profile == data['from'])
+
 	profile = db.get(Prof.profile == data['from'])
 
-	if profile['nick'] is '': 
-		db.update({'nick': data['from']}, doc_ids=[profile.doc_id])
-		profile['nick'] = data['from'][2].replace("+61", "0", 1)+data['from'][3:]
+	if profile is None: 
+		rtn = db.upsert({'profile': data['from'], 'nick': data['from'][0:3].replace("+61", "0", 1)+data['from'][3:]}, Prof.profile == data['from'])
+		profile = db.get(Prof.profile == data['from'])
 
 	first = data['body'].split(' ')
 
@@ -173,10 +185,10 @@ def post():
 
 
 	else: 
-		sendsms(data['from'], "SMSlist help - create [list], send [list], delete [list], add/remove [list] [mobile], restrict/unrestrict [list]. Example: 'create list1'. [list] = list name with no spaces in list name and alpha/numbers only. ::: Set Name [nickname] to set name in send.")
+		sendsms(data['from'], "SMSlist help - create [list], send [list], delete [list], add/remove [list] [mobile], restrict/unrestrict [list]. see https://smslist.telstradev.com for more info")
 
 	return ""
 
  
 if __name__ == "__main__":
-    app.run()
+    app.run(debug = True, passthrough_errors=True)

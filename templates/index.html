@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<title>SMSList Demo</title>
+
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+</head>
+<body class="container">
+
+<main>
+	<div class="page-header">
+	  <h1>SMSList Demo <small>text to {{ prov }}</small></h1>
+	  <h4><a href="https://github.com/telstra/smslist" target="blank">See the code on Github</a></h4> 		
+	</div>
+	<div class="row">
+	    <div class="col-md-8">    
+	    	<div class="jumbotron">
+	    		<h2>SMSList Commands</h2>
+				
+				{% for row in inst %}
+				
+					<div class="media">
+					  <div class="media-left">
+					      <img src="https://github.com/developersteve/TelstraDev-in-2mins-intro/blob/master/messagingapi-icon_360.png?raw=true" alt="TelstraDev MessagingAPI icon" width="80px">
+					  </div>
+					  <div class="media-body">
+					    <h4 class="media-heading">{{row.title}}</h4>
+					    <div style="font-size: 1em; font-style: italic;">{{row.example}}</div>
+					    <p>{{row.blurb}}</p>
+					  </div>
+					</div>
+
+				{% endfor %} 
+
+	    	</div>
+	    </div>
+<!-- SMSlist help - create [list], send [list], delete [list], add/remove [list] [mobile], restrict/unrestrict [list]. Example: 'create list1'. [list] = list name with no spaces in list name and alpha/numbers only. ::: Set Name [nickname] to set name in send. -->
+	    <div class="col-sm-4">        
+	        <div class="well">
+				<h4><a href="https://twitter.com/telstradev" target="blank">follow us at @TelstraDev</a></h4>
+	        	<h3> {{ users }} Users</h3>
+	        	<h3> {{ lists }} Lists Created</h3>
+	        </div>
+	    </div>
+	</div>
+</main>
+
+</body>
+</html>
+
