@@ -3,5 +3,5 @@ tinydb==3.9.0.post1
 Flask==1.0.2
 certifi==2018.4.16
 python_dateutil==2.7.3
-urllib3==1.23
+urllib3==1.26.5
 -e git+git://github.com/telstra/MessagingAPI-SDK-python@master#egg=Telstra_Messaging
